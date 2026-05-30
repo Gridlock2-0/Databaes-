@@ -62,17 +62,66 @@ submission.csv      — Final predictions
 experiments.md      — Full experiment log
 ```
 
-## How to Reproduce
+## Setup for Teammates
 
+### 1. Clone the repo
 ```bash
-pip install lightgbm scikit-learn pandas numpy pygeohash
-
-# Train (saves models/ and prints CV R²)
-python -m scripts.train
-
-# Generate submission
-python -m scripts.predict
+git clone https://github.com/Gridlock2-0/Databaes-.git
+cd Databaes-
 ```
+
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Add the dataset
+The dataset is not in the repo (competition data). Get the CSVs from HackerEarth and place them here:
+```
+dataset/
+  train.csv
+  test.csv
+  sample_submission.csv
+```
+
+### 4. You now have two options:
+
+**Option A — Just generate predictions** (models are already trained and committed):
+```bash
+python -m scripts.predict
+# Writes submission.csv
+```
+
+**Option B — Re-train from scratch** (takes ~5–6 minutes):
+```bash
+python -m scripts.train
+# Saves fold_0.lgb … fold_4.lgb into models/
+# Prints CV R² for full + ablation runs
+
+python -m scripts.predict
+# Writes submission.csv
+```
+
+### 5. Verify lag features are leak-free (optional)
+```bash
+python -m scripts.verify_lags
+```
+
+---
+
+## File Reference
+
+| File | What it does |
+|---|---|
+| `scripts/features.py` | All feature engineering — base features, lags, LOO target encodings |
+| `scripts/cv.py` | TimeSeriesSplit fold generator |
+| `scripts/train.py` | Trains LightGBM with 5-fold CV, runs ablation, saves models |
+| `scripts/predict.py` | Loads fold models, averages predictions, writes `submission.csv` |
+| `scripts/verify_lags.py` | 4-check proof that lag features have no data leakage |
+| `scripts/eda.py` | Exploratory data analysis |
+| `models/fold_*.lgb` | Trained fold models (ready to use — no re-training needed) |
+| `experiments.md` | Log of every experiment: what changed, CV R², notes |
+| `submission.csv` | Current best submission file |
 
 ---
 
