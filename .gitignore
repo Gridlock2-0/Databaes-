@@ -1,0 +1,6 @@
+dataset/
+models/
+__pycache__/
+*.pyc
+.env
+eda/
